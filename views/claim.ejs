@@ -1,0 +1,27 @@
+<%- include('_header'); -%>
+<body>
+    <div class="container">
+        <div class="wrapper">
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <td>文句</td>
+                    <td>投稿者</td>
+                </tr>
+                <% claimList.forEach(function(claimItem) { %>
+                    <tr>
+                        <td><%= claimItem.content %></br></td>
+                        <td><%= claimItem.create_by %></br></td>
+                    </tr>
+                <% }); %>
+            </table></br>
+            <form action="/claim" method="post" class="claimform" name="claimform">
+                <div class="form-group">
+                    <label for="claim_content">文句を言う:</label>
+                    <textarea id="claim_content" name="claim_content" cols="50"s="10" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary submit">投稿する</button>
+            </form>
+            <p>気になる事があれば、何でも投稿してください。</p>
+        </div>
+    </div>
+</body>

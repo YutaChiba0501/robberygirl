@@ -1,0 +1,89 @@
+<%- include('_header'); -%>
+<body>
+    <div class="container">
+        <% url = "/entry/" + invitation_id %>
+        <form action= <%= url %> method="post" class="entry" name="entryform"">
+            <div class="form-group">
+                <div class="row">
+                    <label for="username">ユーザーID:</label>
+                    <div class="col-sm-3">
+                        <input type="text" id="username" name="username" class="form-control" onchange="validation()" placeholder=XXX@YY.ZZ required>
+                    </div>
+                    <div class="col-sm-9">
+                        <p><span id="max_username_valmessage" style="color:red"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="password">パスワード:</label>
+                    <div class="col-sm-3">
+                        <input type="password" id="password" name="password" class="form-control" required>    
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="password_confirm">パスワード(確認用):</label>
+                    <div class="col-sm-3">
+                        <input type="password" id="password_confirm" name="password_confirm" class="form-control" onchange="pass_confirm()" required>    
+                    </div>
+                    <div class="col-sm-9">
+                        <p><span id="password_confirm_valmessage" style="color:red"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="name">ニックネーム:</label>
+                    <div class="col-sm-3">
+                        <input type="text" id="name"" name="name" class="form-control" required>    
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="name">ラインID（任意）:</label>
+                    <div class="col-sm-3">
+                        <input type="text" id="line_id"" name="line_id" class="form-control">    
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="favorite">好きな物:</label>
+                    <div class="col-sm-3">
+                        <input type="text" id="favorite" name="favorite" placeholder='世界の盆地100選' class="form-control" required>    
+                    </div>
+                </div>
+            </div>
+            <button id="entry_submit" type="submit" class="btn btn-primary submit">新規登録</button>
+            <!-- 簡易バリデーション(max_length) -->
+            <script>
+                function validation(){
+                    entry_submit = document.getElementById("entry_submit");
+                    //メールアドレス形式チェック
+                    check_targ = document.entryform.username.value;
+                    if(check_targ.match(/.+@.+\..+/)==null){
+                        document.getElementById('max_username_valmessage').textContent = 'メールアドレスの形式で入力してください。';
+                        entry_submit.disabled = "disabled";
+                    } else {
+                        document.getElementById('max_username_valmessage').textContent = 'OK!';
+                        entry_submit.disabled = "";
+                    }
+                }
+                function pass_confirm(){
+                    entry_submit = document.getElementById("entry_submit");
+                    password = document.entryform.password.value;
+                    password_confirm = document.entryform.password_confirm.value;
+                    if(password != password_confirm){
+                        document.getElementById('password_confirm_valmessage').textContent = '確認用パスワードが違います';
+                        entry_submit.disabled = "disabled";
+                    } else {
+                        document.getElementById('password_confirm_valmessage').textContent = 'OK!';
+                        entry_submit.disabled = "";
+                    }
+
+                }
+            </script>
+        </form>    
+    </div>
+</body>

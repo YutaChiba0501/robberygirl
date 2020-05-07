@@ -1,0 +1,24 @@
+<%- include('_header'); -%>
+<body>
+    <div class="container">
+        <p>イベント一覧</p>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <tr class="bg-info">
+                    <th>タイトル</th>
+                    <th>日付</th>
+                    <th>ステータス</th>
+                </tr>
+                <% eventList.forEach(function(eventItem) { %>
+                    <% url = "/event_detail/" + eventItem.id %>
+                    <tr>
+                        <td><a href=<%= url %>><%= eventItem.title %></td></a>
+                        <td><a href=<%= url %>><%= eventItem.date %></td></a>
+                        <!-- 主催/参加情報を上書きして表示 -->
+                        <td><a href=<%= url %>><%= eventItem.create_by %></td></a>
+                    </tr>
+                <% }); %>
+            </table>
+        </div>
+    </div>
+</body>
