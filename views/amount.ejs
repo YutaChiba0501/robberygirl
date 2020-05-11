@@ -14,30 +14,21 @@
             </br>
             ----*ゲスト枠*----
             <form name="add_form">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="entrants_id" onchange="change_box_event(<%= fee %>)" id='1'>
-                    <input type="text" id="text_box" class="form-control">
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="entrants_id" onchange="change_box_event(<%= fee %>)" id='2'>
-                    <input type="text" id="text_box" class="form-control">
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="entrants_id" onchange="change_box_event(<%= fee %>)" id='3'>
-                    <input type="text" id="text_box" class="form-control">
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="entrants_id" onchange="change_box_event(<%= fee %>)" id='4'>
-                    <input type="text" id="text_box" class="form-control">
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="entrants_id" onchange="change_box_event(<%= fee %>)" id='5'>
-                    <input type="text" id="text_box" class="form-control">
+                <div id = 'guest_parent'>
+                    <div hidden>
+                        <div id = 'guest_child' class="form-check">
+                            <input class="form-check-input" type="checkbox" name="entrants_id" onchange="change_box_event(<%= fee %>)">
+                            <input type="text" id="text_box" class="form-control">
+                        </div>
+                    </div>
+                    <div id = 'guest_child' class="form-check">
+                        <input class="form-check-input" type="checkbox" name="entrants_id" onchange="change_box_event(<%= fee %>)">
+                        <input type="text" id="text_box" class="form-control">
+                    </div>
                 </div>
             </form>
             <h1><span id="span1">合計金額: 0</span></h1>
-
-
+            <input type="button" class="btn btn-primary" value="ゲストの追加" onclick="guest_add()">
 
         
             <!-- 計算処理 -->
@@ -61,6 +52,15 @@
                     }
                     total = (list_size.length + list_size_add.length)*fee;
                     document.getElementById("span1").textContent = '合計金額: ' + String(total);
+                }
+
+                function guest_add(){
+                    let guest_parent = document.getElementById('guest_parent');
+                    let guest_child = document.getElementById('guest_child');
+
+                    // 項目の複製
+                    let new_child = guest_child.cloneNode(true);
+                    guest_parent.appendChild(new_child);            
                 }
             </script>
         </div>
