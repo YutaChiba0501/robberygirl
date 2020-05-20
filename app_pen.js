@@ -1,82 +1,13 @@
 
 const express = require("express");
 
-//const connection = require('./sql_connector'); // 追加
 const pool = require('./sql_connector'); // 追加
 
 const app = express();
 
-/**
- * SSL用-----------------------------------------------------------------------
- */
-
-const fs = require('fs');
-const https = require('https');
-const options = {
-  key: fs.readFileSync('/etc/letsencrypt/live/robberygirl.info/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/robberygirl.info/cert.pem'),
-  ca: fs.readFileSync('/etc/letsencrypt/live/robberygirl.info/chain.pem')
-};
-const https_server = https.createServer(options, app);
-
-/**
- * Line用-----------------------------------------------------------------------
- */
-
-const line = require('@line/bot-sdk');
-const config = {
-    channelAccessToken: '****',
-    channelSecret: '*****',
-};
-
-const client = new line.Client(config);
-
-// 変数ズ
+// クエリ宣言
 let query = '';
-let who = ''//匿名投稿者名用の変数
-let user_name = '';//画面上部表示用
-
-//今日の占いコーナー
-app.post('/callback', line.middleware(config), (req, res) => {
-    Promise
-      .all(req.body.events.map(handleEvent))
-      .then((result) => res.json(result))
-      .catch((err) => {
-        console.error(err);
-        res.status(500).end();
-      });
-  });
-  
-  // event handler
-  function handleEvent(event) {
-    if (event.type !== 'message' || event.message.type !== 'text') {
-      return Promise.resolve(null);
-    }
-  
-    let oracle = '';
-    if (event.message.text.includes("占")) {
-        const rand_list_1 = ['大凶','凶','吉','末吉','小吉','中吉','大吉',];
-        const rand_list_2 = ['運命の人はなんと、異性です','次の占いから￥100かかります'];
-
-        const str_1 = rand_list_1[Math.floor( Math.random() * rand_list_1.length)]
-        const str_2 = rand_list_2[Math.floor( Math.random() * rand_list_2.length)]
-
-        oracle = "あなたの運勢は" + str_1 + "です。\n" + str_2   
-    } else if (event.message.text.includes("おすすめ")){
-        const rand_list = ['甲殻類はかに','麺類はラーメン','IDEはEclipse',];
-        
-        const str = rand_list[Math.floor( Math.random() * rand_list.length)]
-        oracle = "おすすめの" + str + "です。" 
-    }　else if (event.message.text.includes("やって")){
-        oracle = "自分でやって。" 
-    } else {
-        oracle = "すみません、よくわかりません" 
-    }
-    const echo = { type: 'text', text: oracle };
-    return client.replyMessage(event.replyToken, echo);
-  }
-  
-//-----------------------------------------------------------------------
+let who = ''
 
 //画像ファイル置き場の設定Static?
 app.use('/images', express.static('images'));
@@ -85,11 +16,6 @@ app.use('/css', express.static('css'));
 //POST処理に必要？
 const bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({ extended: true }))
-
-//バリデーションに必要
-// npm install express-validator
-const {validationResult} = require('express-validator');
-const appValidator = require('./appValidator');
 
 // テンプレートエンジンの指定
 app.set("view engine", "ejs");
@@ -107,44 +33,6 @@ function isAuthenticated(req, res, next){
         res.redirect('/login');  
     }
 }
-
-/**
- * 定期処理-----------------------------------------------------------------------
- */
-// npm install node-cron --save
-const cron = require('node-cron');
-// cron.schedule('* * * * * ', () => {//毎分(テスト用）
-//     console.log(('aaa'));
-// });
-cron.schedule('0 0 9 * * *', () => {//毎日９時に更新
-    //古いイベントを非表示
-    let now = new Date();
-    let now_month = now.getMonth()+1;
-    let now_day = now.getDate();
-    query = 'SELECT * FROM events';
-    pool.getConnection(function(err, connection){
-        connection.query(query, function(err, rows) {
-            //ID→名前に変換
-            for(let i = 0; i < rows.length; i++) {
-                let rec_date = rows[i].date;
-                let rec_month = rec_date.substr(5,2);
-                let rec_day = rec_date.substr(8,2);
-    
-                if (Number(now_month) > Number(rec_month)) {
-                    query = 'UPDATE  events SET  deleted = 1 WHERE id=' + String(rows[i].id)
-                    connection.query(query, function(err, rows) {});
-                } else if (Number(now_month) == Number(rec_month)) {
-                    if (Number(now_day) > Number(rec_day)) {
-                        query = 'UPDATE  events SET  deleted = 1 WHERE id=' + String(rows[i].id)
-                        connection.query(query, function(err, rows) {});
-                    }
-                }
-            }
-            console.log(('DELETE proccess successed!'));
-            connection.release();//プールの開放
-        });
-    });
-});
 
 /**
  * ログイン周り処理-----------------------------------------------------------------------
@@ -186,7 +74,7 @@ passport.use(new LocalStrategy(function(username, password, done){
  */
 const session = require('express-session');
 app.use(session({
-    secret: '*****',
+    secret: '******',
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -344,7 +232,7 @@ app.get("/entrant_edit", function (req, res) {
     pool.getConnection(function(err, connection){
         query = 'SELECT * FROM entrants'　+ ' WHERE id = ' + String(req.session.passport.user);
         connection.query(query, function(err, rows) {
-            user_name = 'ようこそ ' + rows[0].name + 'さん';
+            let user_name = 'ようこそ ' + rows[0].name + 'さん';
             res.render('entrant_edit', {
                 user_name:user_name,
                 user_id:rows[0].id,
@@ -390,6 +278,7 @@ app.post('/entrant_edit', function(req, res) {
 app.get('/event_add', isAuthenticated, function(req, res) {
     pool.getConnection(function(err, connection){
         query = 'SELECT * FROM entrants'　+ ' WHERE id = ' + String(req.session.passport.user);
+        let user_name = '';
 
         connection.query(query, function(err, rows) {
             user_name = 'ようこそ ' + rows[0].name + 'さん'
@@ -466,6 +355,7 @@ app.post('/event_add', isAuthenticated, function(req, res) {
 app.get('/event_detail/:id', isAuthenticated, function(req, res) {
     pool.getConnection(function(err, connection){
         query = 'SELECT * FROM entrants'　+ ' WHERE id = ' + String(req.session.passport.user);
+        let username = ''
         let create_by_name = ''
         connection.query(query, function(err, rows) {
             user_name = 'ようこそ ' + rows[0].name + 'さん'
@@ -536,6 +426,7 @@ app.post('/event_detail/:id/event_entry', function(req, res) {
 app.get('/event_detail/:id/amount', isAuthenticated,function(req, res) {
     pool.getConnection(function(err, connection){
         query = 'SELECT * FROM entrants'　+ ' WHERE id = ' + String(req.session.passport.user);
+        let user_name = ''
         connection.query(query, function(err, rows) {
             user_name = 'ようこそ ' + rows[0].name + 'さん'
         });
@@ -604,6 +495,7 @@ app.post('/claim',isAuthenticated,function(req, res) {
 app.get('/event_detail/:id/chat',isAuthenticated,function(req, res) {
     pool.getConnection(function(err, connection){
         query = 'SELECT * FROM entrants'　+ ' WHERE id = ' + String(req.session.passport.user);
+        let user_name = '';
         connection.query(query, function(err, rows) {
             user_name = 'ようこそ ' + rows[0].name + 'さん'
         });
@@ -678,8 +570,8 @@ app.post('/pass_reset',isAuthenticated,function(req, res) {
 
 app.on('request', getCss);
 
-https_server.listen(443);
-//app.listen(9029);
+//https_server.listen(443);
+app.listen(9029);
 
 //cssの読み込み
 function getCss(req, res) {
