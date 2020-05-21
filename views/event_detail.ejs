@@ -1,0 +1,94 @@
+<%- include('_header'); -%>
+<body>
+    <div class="container">
+        <div class="wrapper">
+            <table class="table table-bordered table-hover">
+                <tr class="bg-info">
+                    <th>イベント情報</th>
+                    <th></th>
+                </tr>
+                <% eventList.forEach(function(eventItem) { %>
+                    <tr>
+                        <th >タイトル</th>
+                        <th><%= eventItem.title %></th>
+                    </tr>
+                    <tr>
+                        <th >日付</th>
+                        <th><%= eventItem.date %></th>
+                    </tr>
+                    <tr>
+                        <th >時間</th>
+                        <th><%= eventItem.start_time %></th>
+                    </tr>
+                    <tr>
+                        <th >場所</th>
+                        <th><%= eventItem.location %></th>
+                    </tr>
+                    <tr>
+                        <th >人数上限</th>
+                        <th><%= eventItem.maxlength %>人</th>
+                    </tr>
+                    <tr>
+                        <th >参加費</th>
+                        <th><%= eventItem.fee %>円</th>
+                    </tr>
+                    <tr>
+                        <th >主催者</th>
+                        <th><%= eventItem.create_by %></th>
+                    </tr>
+                    <tr>
+                        <th >概要</th>
+                        <th><%= eventItem.description %></th>
+                    </tr></br></br>
+                    <% amount_url = "/event_detail/" + String(eventItem.id) + "/amount" %>
+                    <% chat_url = "/event_detail/" + String(eventItem.id) + "/chat" %>
+                <% }); %>
+            </table>
+        
+        </div>
+        <div class="sub_title">
+            <table class="table table-bordered table-hover">
+                <tr class="bg-info">
+                    <th>参加者名</th>
+                    <th>ラインID</th>
+                </tr>
+                <% entrantList.forEach(function(entrantItem) { %>
+                    <tr>
+                        <td><%= entrantItem.name %></td>
+                        <td><%= entrantItem.line_id %></td>
+                    </tr>
+                <% }); %>
+            </table>
+        
+        </div>
+        <div class="link_to">
+            <a class="btn btn-success" href=<%=amount_url%> role="button">集金画面</a>
+        </div></br></br>
+        <div class="link_to_chat">
+            <a class="btn btn-success" href=<%=chat_url%> role="button">チャットルームへ</a>
+        </div></br></br>
+        <button type="button" class="btn btn-primary" <%= entry_display_flag %> data-toggle="modal" data-target="#modal1">イベントに参加する</button>
+        <!-- 参加確認モーダル -->
+        <div class="modal fade" id="modal1" tabindex="-1"role="dialog" aria-labelledby="label1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="label1">参加確認</h5>
+                    </div>
+                    <div class="modal-body">
+                        このイベントに参加します。よろしいですか？
+                    </div>
+                    <div class="modal-footer">
+                        <% entry_url = "/event_detail/" + event_id + "/event_entry" %>
+                        <form action=<%= entry_url %> method="post" class="event_entry" name="event_entry">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary submit">OK</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- モーダル -->
+
+    </div>
+</body>

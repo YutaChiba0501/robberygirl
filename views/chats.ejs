@@ -1,0 +1,27 @@
+<%- include('_header'); -%>
+<body>
+    <div class="container">
+        <div class="wrapper">
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <td>コメント</td>
+                    <td>投稿者</td>
+                </tr>
+                <% chatList.forEach(function(chatItem) { %>
+                    <tr>
+                        <td><%= chatItem.message %></br></td>
+                        <td><%= chatItem.name %></br></td>
+                    </tr>
+                    <% chat_url = "/event_detail/" + String(event_id) + "/chat" %>
+                <% }); %>
+            </table></br>
+            <form action=<%= chat_url %> method="post" class="chatform" name="chatform">
+                <div class="form-group">
+                    <label for="chat_content">メッセージ:</label>
+                    <textarea id="chat_content" name="message" cols="50"s="10" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary submit">投稿する</button>
+            </form>
+        </div>
+    </div>
+</body>

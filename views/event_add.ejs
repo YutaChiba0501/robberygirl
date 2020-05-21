@@ -1,0 +1,153 @@
+<%- include('_header'); -%>
+<body>
+    <div class="container">
+        <div class="event_parm">
+            <form action="/event_add" method="post" class="eventform" name="eventform">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label for="title">タイトル:</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-7">
+                            <input type="text" id="title" name="title" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label for="location">場所:</label>    
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-7">
+                            <input type="text" id="location" name="location" class="form-control" required>    
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <label for="datetimepicker">日付:</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <input type="text" id="datetimepicker" name="date" class="form-control datetimepicker-input" 
+                            data-toggle="datetimepicker" data-target="#datetimepicker" required>    
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <label for="start_time">時間:</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <select class="form-control" name="start_time" id="start_time" required>
+                                <% for(let i = 0; i < 24; i++) { %>
+                                    <% str_i = String(i) %>
+                                    <% if (str_i.length ==1 ) { str_i = '0' + str_i;} %>
+                                    <option><%= str_i %>:00</option>
+                                    <option><%= str_i %>:30</option>
+                                <% } %>
+                            </select> 
+                        </div>
+                        <div class="col-sm-1">
+                            〜    
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="end_time" id="end_time" required>
+                                <% for(let i = 0; i < 24; i++) { %>
+                                    <% str_i = String(i) %>
+                                    <% if (str_i.length ==1 ) { str_i = '0' + str_i;} %>
+                                    <option><%= str_i %>:00</option>
+                                    <option><%= str_i %>:30</option>
+                                <% } %>
+                            </select>    
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label for="maxlength">人数上限(人):</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1">
+                            <input type="text" id="maxlength" name="maxlength" placeholder=10 class="form-control" onchange="validation('maxlength')" required>
+                        </div>
+                        <div class="col-sm-9">
+                            <p><span id="max_length_valmessage" style="color:red"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label for="fee">参加費(円):</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1">
+                            <input type="text" id="fee" name="fee" placeholder=1000 class="form-control" onchange="validation('fee')" required>
+                        </div>
+                        <div class="col-sm-9">
+                            <p><span id="max_fee_valmessage" style="color:red"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description">概要:</label>
+                    <textarea id="description" name="description" cols="50"s="10" class="form-control" required></textarea>
+                </div>
+                <button id='event_add_submit' type="submit" class="btn btn-primary submit">イベント追加</button>
+            </form>
+            
+            <!-- 簡易バリデーション(max_length) -->
+            <script>
+                function validation(target){
+                    event_add_submit = document.getElementById("event_add_submit");
+                    var checked_targ = '';
+                    var targ_span = '';
+                    if (target == 'maxlength') {
+                        checked_targ = document.eventform.maxlength.value;
+                        targ_span = 'max_length_valmessage';
+                    } else if (target == 'fee') {
+                        checked_targ = document.eventform.fee.value;
+                        targ_span = 'max_fee_valmessage';
+                    }
+                    
+                    if (isNaN(checked_targ)) {
+                        document.getElementById(targ_span).textContent = '半角数字で入力してください';
+                        event_add_submit.disabled = "disabled";
+                    } else {
+                        document.getElementById(targ_span).textContent = 'OK!';
+                        event_add_submit.disabled = "";
+                    }
+                }
+            </script>
+            <!-- 日付の入力補助 -->
+            <script type="text/javascript">
+                $(function () {
+                    $('#datetimepicker').datetimepicker({
+                        locale: 'ja',
+                        dayViewHeaderFormat: 'YYYY年 M月',
+                        format: 'YYYY/MM/DD'
+                    });
+                });
+            </script>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ja.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js"></script>
+</body>

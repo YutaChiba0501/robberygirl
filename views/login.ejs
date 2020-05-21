@@ -1,0 +1,24 @@
+<%- include('_header'); -%>
+<body>
+    <div class="container">
+        <form action="/login" method="post" class="login" name="login">
+            <div class="form-group">
+                <div class="row">
+                    <label for="username">ユーザーID  :</label>
+                    <div class="col-sm-3">
+                        <input type="text" id="username" name="username" class="form-control" placeholder=XXX@YY.ZZ required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="password">パスワード:</label>
+                    <div class="col-sm-3">
+                        <input type="password" id="password" name="password" class="form-control" required>    
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary submit">ログイン</button>
+        </form>    
+    </div>
+</body>

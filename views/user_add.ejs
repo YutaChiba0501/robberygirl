@@ -1,0 +1,24 @@
+<%- include('_header'); -%>
+<body>
+    <div class="container">
+        <div class="wrapper">
+            <h3>メンバ一覧 </h3>
+            <table class="table table-bordered table-hover">
+                <tr class="bg-info">
+                    <th>ニックネーム</th>
+                    <th>好きなもの</th>
+                    <th>招待者</th>
+                </tr>
+                <% boardList.forEach(function(boardItem) { %>
+                    <tr>
+                        <td><p class="name"><%= boardItem.name %></p></td>
+                        <td><p class="favorite"><%= boardItem.favorite %></p></td>
+                        <td><p class="invitation_by"><%= boardItem.invitation_id %></p></td>
+                    </tr>
+                <% }); %>
+            </table>
+            </br>
+        </div>
+    </br></br><h3>招待用URL：<%= invitation_id %> </h3>
+    </div>
+</body>

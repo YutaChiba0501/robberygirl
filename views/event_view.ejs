@@ -1,0 +1,18 @@
+<%- include('_header'); -%>
+<body>
+    <div class="container">
+        <div class="wrapper">
+            <table class="table table-bordered table-hover">
+                <tr class="bg-info">
+                    <th>イベント名</th>
+                </tr>
+                <% eventList.forEach(function(eventItem) { %>
+                    <% url = "/event_detail/" + eventItem.id %>
+                    <tr>
+                        <td><a href=<%= url %>><%= eventItem.title %></a></br></td>
+                    </tr>
+                <% }); %>
+            </table>
+        </div>
+    </div>
+</body>

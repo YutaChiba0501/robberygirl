@@ -1,0 +1,35 @@
+<%- include('_header'); -%>
+<body>
+    <div class="container">
+        <form action='/entrant_edit' method="post" class="entry" name="user_edit_form"">
+            <% userList.forEach(function(user_data) { %>
+            <div class="form-group">
+                <div class="row">
+                    <label for="name">ニックネーム:</label>
+                    <div class="col-sm-3">
+                        <input type="hidden" id='id' name="id" value=<%= user_data.id %>>
+                        <input type="text" id="name"" name="name" class="form-control" value=<%= user_data.name %> required>    
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="name">ラインID（任意）:</label>
+                    <div class="col-sm-3">
+                        <input type="text" id="line_id"" name="line_id" value=<%= user_data.line_id %> class="form-control">    
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="favorite">好きな物:</label>
+                    <div class="col-sm-3">
+                        <input type="text" id="favorite" name="favorite" placeholder='世界の盆地100選' value=<%= user_data.favorite %> class="form-control" required>    
+                    </div>
+                </div>
+            </div>
+            <% }); %>
+            <button id="entry_submit" type="submit" class="btn btn-primary submit">情報を登録する</button>
+        </form>    
+    </div>
+</body>

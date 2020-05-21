@@ -1,0 +1,140 @@
+<html>
+<%- include('_header'); -%>
+<body>
+    <div class="container">
+        <div class="main_title" id="main_title" >
+            <form name="check_form">
+                <% entrantList.forEach(function(entrantItem) { %>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="entrants_id" value=<%= entrantItem.id %> onchange="change_box_event(<%=fee%>)" id="<%= entrantItem.name %>" >
+                        <label class="form-check-label" for="<%= entrantItem.name %>"><%= entrantItem.name %></label>
+                    </div>
+                <% }); %>
+            </form>
+            </br>
+            ----*ゲスト枠*----
+            <form name="add_form">
+                <div id = 'guest_parent'>
+                    <div hidden>
+                        <div id = 'guest_child' class="form-check">
+                            <input class="form-check-input" type="checkbox" name="entrants_id" onchange="change_box_event(<%= fee %>)">
+                            <input type="text" id="text_box" class="form-control">
+                        </div>
+                    </div>
+                    <div id = 'guest_child' class="form-check">
+                        <input class="form-check-input" type="checkbox" name="entrants_id" onchange="change_box_event(<%= fee %>)">
+                        <input type="text" id="text_box" class="form-control">
+                    </div>
+                </div>
+            </form>
+            <h1><span id="span1">合計金額: 0</span></h1>
+            <input type="button" class="btn btn-primary" value="ゲストの追加" onclick="guest_add()">
+
+        
+            <!-- 計算処理 -->
+            <script>
+                function change_box_event(fee){
+                    var list_size = []
+                    //参加者枠の計算
+                    var checked_list = document.check_form.entrants_id;
+                    for (let i = 0; i < checked_list.length; i++){
+                        if(checked_list[i].checked){
+                            list_size.push(checked_list[i].value);
+                        }
+                    }
+                    //ゲスト枠の計算
+                    var list_size_add = []
+                    var checked_list_add = document.add_form.entrants_id;
+                    for (let i = 0; i < checked_list_add.length; i++){
+                        if(checked_list_add[i].checked){
+                            list_size_add.push(checked_list_add[i].value);
+                        }
+                    }
+                    total = (list_size.length + list_size_add.length)*fee;
+                    document.getElementById("span1").textContent = '合計金額: ' + String(total);
+                }
+
+                function guest_add(){
+                    let guest_parent = document.getElementById('guest_parent');
+                    let guest_child = document.getElementById('guest_child');
+
+                    // 項目の複製
+                    let new_child = guest_child.cloneNode(true);
+                    guest_parent.appendChild(new_child);            
+                }
+            </script>
+        </div>
+    </div></br></br></br>
+    <!-- 電卓部分 -->
+    <div class="container">
+        <form name="calc_form">
+            電卓
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <input type="text" id="cell_1" name="cell_1" class="form-control" required>
+                    </div>
+                    <div class="col-sm-1">
+                        <form name="calc_radio">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="oparator" id="oparator1" value=1 checked>
+                                <label class="form-check-label" for="oparator1">+</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="oparator" id="oparator2" value=2>
+                                <label class="form-check-label" for="oparator2">-</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="oparator" id="oparator3" value=3>
+                                <label class="form-check-label" for="oparator3">×</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="oparator" id="oparator4" value=4>
+                                <label class="form-check-label" for="oparator4">÷</label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="text" id="cell_2" name="cell_2" class="form-control" required>  
+                    </div>
+                    <div class="col-sm-1">
+                        <input type="button" class="btn btn-info" onClick="calc_equal()" value="＝"></button>  
+                    </div>
+                    <div class="col-sm-3">
+                        <h2><span id="span2">結果:</span></h2>  
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- 計算処理 -->
+        <script>
+            function calc_equal(){
+                var cell_1 = document.calc_form.cell_1;
+                var cell_2 = document.calc_form.cell_2;
+                var oparator = document.getElementsByName("oparator") ;
+
+                // ラジオボタンの値を取得する
+                op_type = 1;
+                for (let i = 0; i < oparator.length; i++){
+                    if(oparator[i].checked){ //(color1[i].checked === true)と同じ
+                        op_type = oparator[i].value;
+                        break;
+                    }
+                }
+
+                var total = 0;
+                if (op_type == 1) {
+                    total = Number(cell_1.value) + Number(cell_2.value);
+                } else if (op_type == 2) {
+                    total = Number(cell_1.value) - Number(cell_2.value);
+                } else if (op_type == 3) {
+                    total = Number(cell_1.value) * Number(cell_2.value);
+                } else if (op_type == 4) {
+                    total = Number(cell_1.value) / Number(cell_2.value);
+                }
+                document.getElementById("span2").textContent = '結果:' + String(total);
+            }
+        </script>
+</body>
+</html>
